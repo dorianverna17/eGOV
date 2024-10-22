@@ -5,8 +5,36 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
         function calculateLoan() {
+            const buyerName = document.getElementById("buyerName").value;
+            const carName = document.getElementById("carName").value;
             const carPrice = document.getElementById("carPrice").value;
             const loanTerm = document.getElementById("loanTerm").value;
+            const salary = document.getElementById("salary").value;
+            const deposit = document.getElementById("deposit").value;
+            const annualInterest = document.getElementById("annualInterest").value;
+            const paymentIncrease = document.getElementById("paymentIncrease").value;
+            
+            const monthContainer = document.getElementById('monthContainer');
+
+            // Clear previous months
+            monthContainer.innerHTML = '';
+
+            // Create a list of months based on the input value
+            for (let i = 1; i <= loanTerm; i++) {
+                const monthDiv = document.createElement('div');
+
+                monthDiv.style.width = '300px';
+                monthDiv.style.height = '200px';
+                monthDiv.style.border = '1px';
+                monthDiv.style.padding = '10px';
+                monthDiv.style.background = "rgb(230, 173, 177)";
+                monthDiv.style.marginBottom = '15px';
+                monthDiv.style.marginTop = '10px';
+                monthDiv.id = 'Month' + i;
+                monthDiv.textContent = 'Month ' + i;
+                
+                monthContainer.appendChild(monthDiv);
+            }
 
             var soapEnvelope = `<?xml version="1.0" encoding="utf-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -24,14 +52,24 @@
                 url: "http://127.0.0.1:8000",
                 type: "POST",
                 dataType: "xml",
-                contentType: "text/xml; charset=utf-8",
+                contentType: "text/xml; charset=UTF-8",
                 data: soapEnvelope,
-                crossDomain: true,  // Add this line
                 success: function(response, textStatus, xhr) {
-                    if (xhr.status == 200) {
-                        var result = $(response).find("calculateLoanResponse").text();
-                        console.log(result)
-                        document.getElementById("result").innerHTML = "Monthly Payment: $" + result;
+                    var xmlDoc = $.parseXML(xhr.responseText);
+                    var $xml = $(xmlDoc);
+
+                    console.log(response)
+                    console.log(xmlDoc)
+                    
+                    var result = xmlDoc.getElementsByTagName("tns:calculateLoanResult")[0];
+                    
+                    console.log(result)
+                    const loanResult = result ? result.textContent.trim() : null;
+                    
+                    console.log(loanResult)
+                    for (let i = 1; i <= loanTerm; i++) {
+                        const monthDiv = document.getElementById('Month' + i) ;
+                        monthDiv.textContent += ": " + loanResult
                     }
                 },
                 error: function(error) {
@@ -40,27 +78,111 @@
                 }
             })
         }
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const buyerName = document.getElementById("displayBuyerName").innerText;
+            const carName = document.getElementById("displayCarName").innerText;
+            const loanAmount = document.getElementById("loanAmount").innerText;
+            const monthlyPayment = document.getElementById("monthlyPayment").innerText;
+            const totalInterest = document.getElementById("totalInterest").innerText;
+            const totalCost = document.getElementById("totalCost").innerText;
+
+            doc.text(`Loan Calculation Results`, 10, 10);
+            doc.text(`Buyer: ${buyerName}`, 10, 20);
+            doc.text(`Car Model/Name: ${carName}`, 10, 30);
+            doc.text(`Loan Amount: $${loanAmount}`, 10, 40);
+            doc.text(`Monthly Payment: $${monthlyPayment}`, 10, 50);
+            doc.text(`Total Interest Paid: $${totalInterest}`, 10, 60);
+            doc.text(`Total Cost of Loan: $${totalCost}`, 10, 70);
+
+            doc.save('car_loan_results.pdf');
+        }
     </script>
     <style>
+        body {
+            display: flex;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 90vh; /* Full height */
+        }
+
         .myDiv {
-            width: 200px;
-            height: 200px;
-            background-color: lightblue;
-            text-align: center;
+            width: 60%; /* Set the width of the div container */
+            padding: 20px;
+            border: 1px solid #ccc; /* Optional border for visibility */
+            background-color: #f9f9f9; /* Light background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        .loan-form {
+            width: 40%; /* Set the width of the form */
+            margin-left: 20px; /* Space between div and form */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50; /* Dark color for title */
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block; /* Ensures labels stack nicely */
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 60%; /* Full width input fields */
+            padding: 10px; /* Padding for input fields */
+            border: 1px solid #ccc; /* Border for input fields */
+            border-radius: 4px; /* Rounded corners */
+            margin-right: 10px;
+        }
+
+        input[type="button"],
+        button {
+            padding: 10px 15px;
+            background-color: #3498db; /* Button background color */
+            color: white; /* Button text color */
+            border: none; /* Remove border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        input[type="button"]:hover,
+        button:hover {
+            background-color: #2980b9; /* Darker shade on hover */
         }
     </style>
 </head>
 
 <body>
-    <h1>Car Loan Calculator</h1>
 
-    <form id="loanForm">
-        Car Price: <input type="number" id="carPrice" name="carPrice"><br><br>
-        Loan Term (months): <input type="number" id="loanTerm" name="loanTerm"><br><br>
-        <input type="button" value="Calculate" onclick="calculateLoan()">
+    <form id="loanForm" class="loan-form">
+        <h1>Car Loan Calculator</h1>
+
+        Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" required><br><br>
+        Car Model/Name:<br><input type="text" id="carName" name="carName" required><br><br>
+        Car Price:<br> <input type="number" id="carPrice" name="carPrice"><br><br>
+        Loan Term (months):<br> <input type="number" id="loanTerm" name="loanTerm"><br><br>
+        Salary:<br> <input type="number" id="salary" name="salary"><br><br>
+        Deposit:<br> <input type="number" id="deposit" name="deposit"><br><br>
+        Annual Interest Rate:<br> <input type="number" id="annualInterest" name="annualInterest"><br><br>
+        Payment Increase Rate:<br> <input type="number" id="paymentIncrease" name="paymentIncrease"><br><br>
+        <input id="submit" type="button" value="Calculate" onclick="calculateLoan()" style="margin-bottom: 10px;">
+        <button onclick="generatePDF()">Download PDF</button> <!-- PDF button -->
     </form>
 
-    <div id="result" class="myDiv"></div>
+    <div id="monthContainer" class="myDiv"></div>
 </body>
 
 </html>
