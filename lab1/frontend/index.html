@@ -27,9 +27,12 @@
                 contentType: "text/xml; charset=utf-8",
                 data: soapEnvelope,
                 crossDomain: true,  // Add this line
-                success: function(response) {
-                    var result = $(response).find("service:result").text();
-                    document.getElementById("result").innerHTML = "Monthly Payment: $" + result.monthlyPayment;
+                success: function(response, textStatus, xhr) {
+                    if (xhr.status == 200) {
+                        var result = $(response).find("calculateLoanResponse").text();
+                        console.log(result)
+                        document.getElementById("result").innerHTML = "Monthly Payment: $" + result;
+                    }
                 },
                 error: function(error) {
                     console.error(error);

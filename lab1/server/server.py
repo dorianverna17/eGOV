@@ -17,6 +17,7 @@ request_dict = {}
 request_no = 0
 
 class LoanCalculatorService(ServiceBase):
+    @rpc(Float, Integer, _returns=Float)
     def calculateLoan(ctx, carPrice, loanTerm):
         """
         Calculate the monthly payment for a loan.
@@ -32,38 +33,21 @@ class LoanCalculatorService(ServiceBase):
         # Simple loan payment formula for fixed-rate loans
         monthly_payment = (carPrice * monthly_rate) / (1 - (1 + monthly_rate) ** -loanTerm)
         
+        global request_dict
+        global request_no
+
         request_dict[request_no] = monthly_payment
         request_no += 1
+
+        ctx.transport.resp_code = 200
+
+        logger.info("Monthly payment is " + str(monthly_payment))
+
+        return monthly_payment
 
 class CORSMiddleware:
     def __init__(self, app):
         self.app = app
-
-    def extract_car_price_from_body(body):
-        """
-        Extract car price from the request XML body.
-        :param body: The XML body as a string.
-        :return: The extracted car price as a float.
-        """
-        root = ET.fromstring(body)
-        # Assuming your XML structure has <carPrice> element
-        car_price_element = root.find('.//carPrice')  # Adjust the path according to your XML schema
-        if car_price_element is not None:
-            return float(car_price_element.text)
-        raise ValueError("carPrice not found in the request body.")
-
-    def extract_loan_term_from_body(body):
-        """
-        Extract loan term from the request XML body.
-        :param body: The XML body as a string.
-        :return: The extracted loan term as an integer.
-        """
-        root = ET.fromstring(body)
-        # Assuming your XML structure has <loanTerm> element
-        loan_term_element = root.find('.//loanTerm')  # Adjust the path according to your XML schema
-        if loan_term_element is not None:
-            return int(loan_term_element.text)
-        raise ValueError("loanTerm not found in the request body.")
 
     def __call__(self, environ, start_response):
         # Define a custom start_response to add CORS headers
@@ -71,30 +55,11 @@ class CORSMiddleware:
             headers.append(('Access-Control-Allow-Origin', '*'))  # Allow any origin
             headers.append(('Access-Control-Allow-Methods', 'POST, OPTIONS'))
             headers.append(('Access-Control-Allow-Headers', 'Content-Type, Authorization'))
+            
+            logger.info("status: " + str(status))
+            status = '200 OK'
+
             return start_response(status, headers, exc_info)
-        
-        # Handle preflight OPTIONS request specifically for POST
-        if environ['REQUEST_METHOD'] == 'OPTIONS':
-
-            body_size = int(environ.get('CONTENT_LENGTH', 0))
-            body = environ['wsgi.input'].read(body_size).decode('utf-8')
-
-            # Define your XML response for OPTIONS requests
-            carPrice = extract_car_price_from_body(body)  # Define this function
-            loanTerm = extract_loan_term_from_body(body)   # Define this function
-                
-            # Call the calculateLoan method
-            response = LoanCalculatorService.calculateLoan(None, carPrice, loanTerm)
-
-            xml_response = '''<?xml version="1.0" encoding="UTF-8"?>
-            <response>
-            <monthlyPayment>{request_dict[${request_no} - 1]}</monthlyPayment>
-            <message>Preflight check successful</message>
-            </response>'''
-            headers = [('Content-Type', 'application/xml')]  # Set appropriate content type
-            custom_start_response('200 OK', headers)
-            return [xml_response.encode('utf-8')]  # Return the XML response as bytes
-        
         
         # Otherwise, proceed with the application (for POST requests)
         return self.app(environ, custom_start_response)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:service="service">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <service:calculateLoan>
+            <service:carPrice>1000</service:carPrice>
+            <service:loanTerm>12</service:loanTerm>
+        </service:calculateLoan>
+    </soapenv:Body>
+</soapenv:Envelope>
