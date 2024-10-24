@@ -1,4 +1,4 @@
-from spyne import Application, rpc, ServiceBase, Integer, Float, Unicode
+from spyne import Application, rpc, ServiceBase, Integer, Float, Unicode, String, Array, ComplexModel
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 import logging
@@ -17,33 +17,45 @@ request_dict = {}
 request_no = 0
 
 class LoanCalculatorService(ServiceBase):
-    @rpc(Float, Integer, _returns=Float)
-    def calculateLoan(ctx, carPrice, loanTerm):
-        """
-        Calculate the monthly payment for a loan.
-        :param carPrice: The price of the car (float).
-        :param loanTerm: The loan term in months (integer).
-        :return: The calculated monthly payment (float).
-        """
+    @rpc(String, String, Float, Integer, Float, Float, Float, Float, _returns=Array(ComplexModel))
+    def calculateLoan(ctx, buyerName, carName, carPrice, loanTerm, salary, deposit, annualInterest, paymentIncrease):
         logger.info("Entered request")
-        # Example loan calculation logic (simple interest for demonstration)
-        interest_rate = 0.05  # Example fixed annual interest rate of 5%
-        monthly_rate = interest_rate / 12  # Monthly interest rate
         
-        # Simple loan payment formula for fixed-rate loans
-        monthly_payment = (carPrice * monthly_rate) / (1 - (1 + monthly_rate) ** -loanTerm)
+        monthly_rate = annualInterest / 12  # Initial monthly interest rate
+        remaining_balance = carPrice - deposit  # Start with the car price minus the deposit
+        
+        payments = []  # List to store (monthly payment, interest) tuples
+        
+        for month in range(loanTerm):
+            # Calculate the monthly payment
+            monthly_payment = (remaining_balance * monthly_rate) / (1 - (1 + monthly_rate) ** -(loanTerm - month))
+            
+            # Store the payment and interest for the current month
+            payments.append({
+                'month': month + 1,
+                'monthly_payment': monthly_payment,
+                'interest': monthly_rate * 100  # Interest as a percentage
+            })
+            
+            # Decrease the balance by the monthly payment made towards the principal
+            interest_paid = remaining_balance * monthly_rate
+            principal_paid = monthly_payment - interest_paid
+            remaining_balance -= principal_paid
+
+            # Update monthly interest rate with the paymentIncrease
+            monthly_rate += paymentIncrease / 12
         
         global request_dict
         global request_no
 
-        request_dict[request_no] = monthly_payment
+        request_dict[request_no] = payments
         request_no += 1
 
         ctx.transport.resp_code = 200
 
-        logger.info("Monthly payment is " + str(monthly_payment))
+        logger.info("Monthly payments with interest generated " + str(payments))
 
-        return monthly_payment
+        return payments
 
 class CORSMiddleware:
     def __init__(self, app):

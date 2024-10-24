@@ -42,8 +42,14 @@
     <soapenv:Header/>
     <soapenv:Body>
         <service:calculateLoan>
+            <service:buyerName>${buyerName}</service:buyerName>
+            <service:carName>${carName}</service:carName>
             <service:carPrice>${carPrice}</service:carPrice>
             <service:loanTerm>${loanTerm}</service:loanTerm>
+            <service:salary>${salary}</service:salary>
+            <service:deposit>${deposit}</service:deposit>
+            <service:annualInterest>${annualInterest}</service:annualInterest>
+            <service:paymentIncrease>${paymentIncrease}</service:paymentIncrease>
         </service:calculateLoan>
     </soapenv:Body>
 </soapenv:Envelope>`;
@@ -61,16 +67,35 @@
                     console.log(response)
                     console.log(xmlDoc)
                     
-                    var result = xmlDoc.getElementsByTagName("tns:calculateLoanResult")[0];
+                    var result = xmlDoc.getElementsByTagName("tns:calculateLoanResult");
                     
-                    console.log(result)
-                    const loanResult = result ? result.textContent.trim() : null;
+                    // console.log(result.item)
+                    // const loanResult = result ? result.textContent.trim() : null;
                     
-                    console.log(loanResult)
-                    for (let i = 1; i <= loanTerm; i++) {
-                        const monthDiv = document.getElementById('Month' + i) ;
-                        monthDiv.textContent += ": " + loanResult
-                    }
+                    // console.log(loanResult)
+                    // for (let i = 1; i <= loanTerm; i++) {
+                    //     const monthDiv = document.getElementById('Month' + i) ;
+                    //     monthDiv.textContent += ": " + loanResult
+                    // }
+
+                    // Iterate over each payment object in the result
+                    // var monthlyPayments = [];
+                    // for (var i = 0; i < result.length; i++) {
+                    //     // Extract each monthly payment details
+                    //     var month = result[i];
+                    //     var monthlyPayment = result[i].getElementsByTagName("monthly_payment")[0].textContent;
+                    //     var interest = result[i].getElementsByTagName("interest")[0].textContent;
+                        
+                    //     // Store the parsed data in an array
+                    //     monthlyPayments.push({
+                    //         month: parseInt(month),
+                    //         monthlyPayment: parseFloat(monthlyPayment),
+                    //         interest: parseFloat(interest)
+                    //     });
+                    // }
+
+                    // Example: Print out the list of monthly payments
+                    console.log("These are the monthly payments " + monthlyPayments);
                 },
                 error: function(error) {
                     console.error(error);
