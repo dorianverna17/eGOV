@@ -24,14 +24,14 @@
                 const monthDiv = document.createElement('div');
 
                 monthDiv.style.width = '300px';
-                monthDiv.style.height = '200px';
+                // monthDiv.style.height = '200px';
                 monthDiv.style.border = '1px';
                 monthDiv.style.padding = '10px';
                 monthDiv.style.background = "rgb(230, 173, 177)";
                 monthDiv.style.marginBottom = '15px';
                 monthDiv.style.marginTop = '10px';
                 monthDiv.id = 'Month' + i;
-                monthDiv.textContent = 'Month ' + i;
+                monthDiv.style.height = "max-content";
                 
                 monthContainer.appendChild(monthDiv);
             }
@@ -75,42 +75,32 @@
 
                     // Iterate over each child node that represents the monthly payment info
                     for (var i = 0; i < result[0].childNodes.length; i++) {
-                        var monthlyPayment = childNodes[i].getElementsByTagName("tns:MonthlyPayment")
+                        var monthlyPayment = childNodes[i]
                         console.log(monthlyPayment);
+                        console.log(monthlyPayment.childNodes)
 
-                        console.log(monthlyPayment.getAttribute('month'))
-                        console.log(monthlyPayment['payment'])
-                        console.log(monthlyPayment['interest'])
+                        var month = monthlyPayment.childNodes[0].childNodes[0].data
+                        console.log(month)
+
+                        var payment = Number(monthlyPayment.childNodes[1].childNodes[0].data).toFixed(3)
+                        console.log(payment)
+
+                        var interest = Number(monthlyPayment.childNodes[2].childNodes[0].data).toFixed(3)
+                        console.log(interest)
+
+                        // Render data inside div
+                        const monthDiv = document.getElementById('Month' + (i + 1));
+
+                        if (monthDiv) {
+                            monthDiv.innerHTML = `
+                                <div class="month-card">
+                                    <strong class="month-label">Month:</strong> <span class="month-value">${month}</span><br>
+                                    <label class="detail-label">Payment:</label> <span class="detail-value">${payment}</span><br>
+                                    <label class="detail-label">Interest:</label> <span class="detail-value">${interest}</span>
+                                </div>
+                            `;
+                        }
                     }
-
-
-                    
-                    // const loanResult = result ? result.textContent.trim() : null;
-                    
-                    // console.log(loanResult)
-                    // for (let i = 1; i <= loanTerm; i++) {
-                    //     const monthDiv = document.getElementById('Month' + i) ;
-                    //     monthDiv.textContent += ": " + loanResult
-                    // }
-
-                    // Iterate over each payment object in the result
-                    // var monthlyPayments = [];
-                    // for (var i = 0; i < result.length; i++) {
-                    //     // Extract each monthly payment details
-                    //     var month = result[i];
-                    //     var monthlyPayment = result[i].getElementsByTagName("monthly_payment")[0].textContent;
-                    //     var interest = result[i].getElementsByTagName("interest")[0].textContent;
-                        
-                    //     // Store the parsed data in an array
-                    //     monthlyPayments.push({
-                    //         month: parseInt(month),
-                    //         monthlyPayment: parseFloat(monthlyPayment),
-                    //         interest: parseFloat(interest)
-                    //     });
-                    // }
-
-                    // Example: Print out the list of monthly payments
-                    // console.log("These are the monthly payments " + monthlyPayments);
                 },
                 error: function(error) {
                     console.error(error);
@@ -202,13 +192,39 @@
         button:hover {
             background-color: #2980b9; /* Darker shade on hover */
         }
+
+        .month-card {
+            background-color: #f5f5f5; /* Light grey background */
+            border: 1px solid #ddd;     /* Light border */
+            border-radius: 8px;         /* Rounded corners */
+            padding: 10px;              /* Spacing inside */
+            margin-bottom: 10px;        /* Spacing between cards */
+            font-family: Arial, sans-serif;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            max-width: 300px;           /* Limit the width */
+        }
+
+        .month-label {
+            font-size: 1.2em;           /* Larger font for the month */
+            color: #333;                /* Darker text color */
+        }
+
+        .detail-label {
+            font-weight: bold;          /* Bold for labels */
+            color: #555;                /* Slightly lighter color for labels */
+        }
+
+        .detail-value {
+            color: #666;                /* Darker gray for values */
+        }
+
     </style>
 </head>
 
 <body>
 
     <form id="loanForm" class="loan-form">
-        <h1>Car Loan Calculator</h1>
+        <h2>Car Loan Calculator</h2>
 
         Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" required><br><br>
         Car Model/Name:<br><input type="text" id="carName" name="carName" required><br><br>

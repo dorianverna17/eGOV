@@ -17,10 +17,17 @@ request_dict = {}
 request_no = 0
 
 class MonthlyPayment(ComplexModel):
+    month = Integer
+    payment = Integer
+    interest = Integer
+
     def __init__(self, month, payment, interest):
         self.month = month
         self.payment = payment
         self.interest = interest
+
+    def __str__(self):
+        return f"{self.month}{self.payment}{self.interest}"
 
 
 class LoanCalculatorService(ServiceBase):
@@ -39,6 +46,8 @@ class LoanCalculatorService(ServiceBase):
             
             # Store the payment and interest for the current month
             payments.append(MonthlyPayment(month + 1, monthly_payment, monthly_rate * 100))
+
+            logger.info(payments[-1].month)
             
             # Decrease the balance by the monthly payment made towards the principal
             interest_paid = remaining_balance * monthly_rate
