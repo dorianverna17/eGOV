@@ -16,8 +16,15 @@ logger.setLevel(logging.DEBUG)
 request_dict = {}
 request_no = 0
 
+class MonthlyPayment(ComplexModel):
+    def __init__(self, month, payment, interest):
+        self.month = month
+        self.payment = payment
+        self.interest = interest
+
+
 class LoanCalculatorService(ServiceBase):
-    @rpc(String, String, Float, Integer, Float, Float, Float, Float, _returns=Array(ComplexModel))
+    @rpc(String, String, Float, Integer, Float, Float, Float, Float, _returns=Array(MonthlyPayment))
     def calculateLoan(ctx, buyerName, carName, carPrice, loanTerm, salary, deposit, annualInterest, paymentIncrease):
         logger.info("Entered request")
         
@@ -31,11 +38,7 @@ class LoanCalculatorService(ServiceBase):
             monthly_payment = (remaining_balance * monthly_rate) / (1 - (1 + monthly_rate) ** -(loanTerm - month))
             
             # Store the payment and interest for the current month
-            payments.append({
-                'month': month + 1,
-                'monthly_payment': monthly_payment,
-                'interest': monthly_rate * 100  # Interest as a percentage
-            })
+            payments.append(MonthlyPayment(month + 1, monthly_payment, monthly_rate * 100))
             
             # Decrease the balance by the monthly payment made towards the principal
             interest_paid = remaining_balance * monthly_rate
@@ -56,6 +59,7 @@ class LoanCalculatorService(ServiceBase):
         logger.info("Monthly payments with interest generated " + str(payments))
 
         return payments
+
 
 class CORSMiddleware:
     def __init__(self, app):

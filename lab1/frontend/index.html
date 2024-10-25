@@ -37,22 +37,22 @@
             }
 
             var soapEnvelope = `<?xml version="1.0" encoding="utf-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                  xmlns:service="service">
-    <soapenv:Header/>
-    <soapenv:Body>
-        <service:calculateLoan>
-            <service:buyerName>${buyerName}</service:buyerName>
-            <service:carName>${carName}</service:carName>
-            <service:carPrice>${carPrice}</service:carPrice>
-            <service:loanTerm>${loanTerm}</service:loanTerm>
-            <service:salary>${salary}</service:salary>
-            <service:deposit>${deposit}</service:deposit>
-            <service:annualInterest>${annualInterest}</service:annualInterest>
-            <service:paymentIncrease>${paymentIncrease}</service:paymentIncrease>
-        </service:calculateLoan>
-    </soapenv:Body>
-</soapenv:Envelope>`;
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                                xmlns:service="service">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <service:calculateLoan>
+                            <service:buyerName>${buyerName}</service:buyerName>
+                            <service:carName>${carName}</service:carName>
+                            <service:carPrice>${carPrice}</service:carPrice>
+                            <service:loanTerm>${loanTerm}</service:loanTerm>
+                            <service:salary>${salary}</service:salary>
+                            <service:deposit>${deposit}</service:deposit>
+                            <service:annualInterest>${annualInterest}</service:annualInterest>
+                            <service:paymentIncrease>${paymentIncrease}</service:paymentIncrease>
+                        </service:calculateLoan>
+                    </soapenv:Body>
+                </soapenv:Envelope>`;
 
             $.ajax({
                 url: "http://127.0.0.1:8000",
@@ -64,12 +64,27 @@
                     var xmlDoc = $.parseXML(xhr.responseText);
                     var $xml = $(xmlDoc);
 
-                    console.log(response)
-                    console.log(xmlDoc)
+                    console.log(response);
+                    console.log(xmlDoc);
                     
                     var result = xmlDoc.getElementsByTagName("tns:calculateLoanResult");
+                    console.log(result);
+
+                    var childNodes = result[0].childNodes;
+                    console.log(childNodes);
+
+                    // Iterate over each child node that represents the monthly payment info
+                    for (var i = 0; i < result[0].childNodes.length; i++) {
+                        var monthlyPayment = childNodes[i].getElementsByTagName("tns:MonthlyPayment")
+                        console.log(monthlyPayment);
+
+                        console.log(monthlyPayment.getAttribute('month'))
+                        console.log(monthlyPayment['payment'])
+                        console.log(monthlyPayment['interest'])
+                    }
+
+
                     
-                    // console.log(result.item)
                     // const loanResult = result ? result.textContent.trim() : null;
                     
                     // console.log(loanResult)
@@ -95,7 +110,7 @@
                     // }
 
                     // Example: Print out the list of monthly payments
-                    console.log("These are the monthly payments " + monthlyPayments);
+                    // console.log("These are the monthly payments " + monthlyPayments);
                 },
                 error: function(error) {
                     console.error(error);
