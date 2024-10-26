@@ -24,8 +24,11 @@ services:
       POSTGRES_USER: dorian
       POSTGRES_PASSWORD: "1234"
       POSTGRES_DB: database
+    ports:
+      - '5432:5432'
     volumes:
       - ./data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - storage_network
 

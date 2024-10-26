@@ -1,6 +1,8 @@
 from spyne import Application, rpc, ServiceBase, Integer, Float, Unicode, String, Array, ComplexModel
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
+from sqlalchemy import create_engine, insert, text
+
 import logging
 import sys
 
@@ -16,6 +18,15 @@ logger.setLevel(logging.DEBUG)
 request_dict = {}
 request_no = 0
 
+# connect to database and create desired table
+engine = create_engine("postgresql+psycopg2://dorian:1234@data-storage:5432/database")
+conn = engine.connect()
+query_table = "CREATE TABLE payments (_no int, payments varchar(500));"
+query=text(query_table)
+conn.execute(query)
+conn.commit()
+
+
 class MonthlyPayment(ComplexModel):
     month = Integer
     payment = Integer
@@ -27,7 +38,7 @@ class MonthlyPayment(ComplexModel):
         self.interest = interest
 
     def __str__(self):
-        return f"{self.month}{self.payment}{self.interest}"
+        return f"({self.month}, {self.payment}, {self.interest})"
 
 
 class LoanCalculatorService(ServiceBase):
@@ -60,12 +71,27 @@ class LoanCalculatorService(ServiceBase):
         global request_dict
         global request_no
 
+        # Add entry to database
+        payments_text = "("
+        for payment in payments[0: len(payments) - 1]:
+            payments_text += str(payment) + ", "
+        payments_text += str(payments[-1]) + ")"
+
+        query_text = "INSERT INTO payments (_no, payments) VALUES (" + \
+            str(request_no) + ", " + payments_text + ");"
+
+        query=text(query_text)
+        conn.execute(query)
+        conn.commit()
+
+        # update dictionary
         request_dict[request_no] = payments
         request_no += 1
 
-        ctx.transport.resp_code = 200
-
         logger.info("Monthly payments with interest generated " + str(payments))
+
+        # return response code and payments
+        ctx.transport.resp_code = 200
 
         return payments
 
