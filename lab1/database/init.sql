@@ -1,5 +1,5 @@
 CREATE TABLE payments
 (
     _no int,
-    payments varchar(500),
+    payments varchar(10000),
 );

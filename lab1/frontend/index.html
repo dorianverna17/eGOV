@@ -4,37 +4,58 @@
     <title>Car Loan Calculator</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
+        // Helper functions
+        function showError(field, message) {
+            alert(message);
+            field.style.borderColor = "red";
+            field.focus();
+            return false;
+        }
+        function isValidDate(dateString) {
+            const regex = /^\d{4}-\d{2}-\d{2}$/; // Check format
+            if (!dateString.match(regex)) return false;
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+        function isPositiveNumber(value) {
+            return !isNaN(value) && Number(value) > 0;
+        }
         function calculateLoan() {
             const buyerName = document.getElementById("buyerName").value;
             const carName = document.getElementById("carName").value;
+            const startDate = document.getElementById("startDate").value;
             const carPrice = document.getElementById("carPrice").value;
             const loanTerm = document.getElementById("loanTerm").value;
             const salary = document.getElementById("salary").value;
             const deposit = document.getElementById("deposit").value;
             const annualInterest = document.getElementById("annualInterest").value;
-            const paymentIncrease = document.getElementById("paymentIncrease").value;
             
+            // Reset text color before validation
+            const fields = [document.getElementById("buyerName"),
+            document.getElementById("carName"),
+            document.getElementById("startDate"),
+            document.getElementById("carPrice"),
+            document.getElementById("loanTerm"),
+            document.getElementById("salary"),
+            document.getElementById("deposit"),
+            document.getElementById("annualInterest")];
+            fields.forEach(field => field.style.borderColor = "black");
+
+            // Validation logic
+            if (buyerName == "") return showError(fields[0], "Buyer name cannot be empty");
+            if (carName == "") return showError(fields[1], "Car name cannot be empty");
+            if (!isValidDate(startDate)) return showError(fields[2], "Please enter a valid start date in YYYY-MM-DD format");
+            if (!isPositiveNumber(carPrice)) return showError(fields[3], "Car price must be a positive number");
+            if (!isPositiveNumber(loanTerm)) return showError(fields[4], "Loan term must be a positive number");
+            if (!isPositiveNumber(salary)) return showError(fields[5], "Salary must be a positive number");
+            if (!isPositiveNumber(deposit)) return showError(fields[6], "Deposit must be a positive number");
+            if (!isPositiveNumber(annualInterest)) return showError(fields[7], "Annual interest must be a positive number");
+
+
             const monthContainer = document.getElementById('monthContainer');
 
             // Clear previous months
             monthContainer.innerHTML = '';
-
-            // Create a list of months based on the input value
-            for (let i = 1; i <= loanTerm; i++) {
-                const monthDiv = document.createElement('div');
-
-                monthDiv.style.width = '300px';
-                // monthDiv.style.height = '200px';
-                monthDiv.style.border = '1px';
-                monthDiv.style.padding = '10px';
-                monthDiv.style.background = "rgb(230, 173, 177)";
-                monthDiv.style.marginBottom = '15px';
-                monthDiv.style.marginTop = '10px';
-                monthDiv.id = 'Month' + i;
-                monthDiv.style.height = "max-content";
-                
-                monthContainer.appendChild(monthDiv);
-            }
 
             var soapEnvelope = `<?xml version="1.0" encoding="utf-8"?>
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -49,7 +70,6 @@
                             <service:salary>${salary}</service:salary>
                             <service:deposit>${deposit}</service:deposit>
                             <service:annualInterest>${annualInterest}</service:annualInterest>
-                            <service:paymentIncrease>${paymentIncrease}</service:paymentIncrease>
                         </service:calculateLoan>
                     </soapenv:Body>
                 </soapenv:Envelope>`;
@@ -82,24 +102,46 @@
                         var month = monthlyPayment.childNodes[0].childNodes[0].data
                         console.log(month)
 
-                        var payment = Number(monthlyPayment.childNodes[1].childNodes[0].data).toFixed(3)
-                        console.log(payment)
+                        var monthly_payment = Number(monthlyPayment.childNodes[1].childNodes[0].data).toFixed(3)
+                        console.log(monthly_payment)
 
-                        var interest = Number(monthlyPayment.childNodes[2].childNodes[0].data).toFixed(3)
-                        console.log(interest)
+                        var principal_payment = Number(monthlyPayment.childNodes[2].childNodes[0].data).toFixed(3)
+                        console.log(principal_payment)
 
-                        // Render data inside div
-                        const monthDiv = document.getElementById('Month' + (i + 1));
+                        var interest_payment = Number(monthlyPayment.childNodes[3].childNodes[0].data).toFixed(3)
+                        console.log(interest_payment)
+
+                        // compute the payment due date
+                        datePay = new Date(startDate)
+                        datePay = new Date(datePay.setMonth(datePay.getMonth() + i))
+                        let options = {year: 'numeric', month: 'long', day: 'numeric'};
+                        datePay = datePay.toLocaleDateString(undefined, options);
+
+                        // Render details received from the server
+                        const monthDiv = document.createElement('div');
+
+                        monthDiv.style.width = '600px';
+                        monthDiv.style.border = '1px';
+                        monthDiv.style.padding = '10px';
+                        monthDiv.style.background = "rgb(230, 173, 177)";
+                        monthDiv.style.marginBottom = '15px';
+                        monthDiv.style.marginTop = '10px';
+                        monthDiv.id = 'Month' + i;
+                        monthDiv.style.height = "max-content";
 
                         if (monthDiv) {
                             monthDiv.innerHTML = `
                                 <div class="month-card">
                                     <strong class="month-label">Month:</strong> <span class="month-value">${month}</span><br>
-                                    <label class="detail-label">Payment:</label> <span class="detail-value">${payment}</span><br>
-                                    <label class="detail-label">Interest:</label> <span class="detail-value">${interest}</span>
+                                    <label class="detail-label">Monthly Payment:</label> <span class="monthly_payment-value">${monthly_payment}</span><br>
+                                    <label class="detail-label">Principal Payment:</label> <span class="principal_payment-value">${principal_payment}</span>
+                                    <label class="detail-label">Interest Payment:</label> <span class="interest_payment-value">${interest_payment}</span>
+                                    <label class="detail-label">Payment due:</label> <span class="datetime-value">${datePay}</span>
                                 </div>
                             `;
                         }
+
+                        monthContainer.appendChild(monthDiv);
                     }
                 },
                 error: function(error) {
@@ -108,26 +150,53 @@
                 }
             })
         }
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+        // Function to download the payment details as a text file
+        function downloadPaymentDetails() {
+            // Retrieve all .month-card elements
+            const monthCards = document.querySelectorAll('.month-card');
+            let fileContent = 'Month Payment Details\n\n';
 
-            const buyerName = document.getElementById("displayBuyerName").innerText;
-            const carName = document.getElementById("displayCarName").innerText;
-            const loanAmount = document.getElementById("loanAmount").innerText;
-            const monthlyPayment = document.getElementById("monthlyPayment").innerText;
-            const totalInterest = document.getElementById("totalInterest").innerText;
-            const totalCost = document.getElementById("totalCost").innerText;
+            const buyerName = document.querySelector('buyerName')?.textContent || '';
+            const carName = document.querySelector('carName')?.textContent || '';
+            const startDate = document.querySelector('startDate')?.textContent || '';
+            const loanTerm = document.querySelector('loanTerm')?.textContent || '';
+            const salary = document.querySelector('salary')?.textContent || '';
+            const deposit = document.querySelector('deposit')?.textContent || '';
+            const annualInterest = document.querySelector('annualInterest')?.textContent || '';
 
-            doc.text(`Loan Calculation Results`, 10, 10);
-            doc.text(`Buyer: ${buyerName}`, 10, 20);
-            doc.text(`Car Model/Name: ${carName}`, 10, 30);
-            doc.text(`Loan Amount: $${loanAmount}`, 10, 40);
-            doc.text(`Monthly Payment: $${monthlyPayment}`, 10, 50);
-            doc.text(`Total Interest Paid: $${totalInterest}`, 10, 60);
-            doc.text(`Total Cost of Loan: $${totalCost}`, 10, 70);
+            fileContent += `Buyer Name: ${buyerName}\n`
+            fileContent += `Buyer Name: ${carName}\n`
+            fileContent += `Buyer Name: ${startDate}\n`
+            fileContent += `Buyer Name: ${loanTerm}\n`
+            fileContent += `Buyer Name: ${salary}\n`
+            fileContent += `Buyer Name: ${deposit}\n`
+            fileContent += `Buyer Name: ${annualInterest}\n`
 
-            doc.save('car_loan_results.pdf');
+            monthCards.forEach(card => {
+                // Clone the node to avoid any potential DOM modification
+                const month = card.querySelector('.month-value')?.textContent || '';
+                const monthly_payment = card.querySelector('.monthly_payment-value')?.textContent || '';
+                const principal_payment = card.querySelector('.principal_payment-value')?.textContent || '';
+                const interest_payment = card.querySelector('.interest_payment-value')?.textContent || '';
+                const payment_date = card.querySelector('.datetime-value')?.textContent || '';
+
+                // Format file content
+                fileContent += `Month: ${month}\nMonthly payment: ${monthly_payment}\nInterest Payment: ${interest_payment}\nPrincipal Payment: ${principal_payment}\nPayment Due: ${payment_date}\n`;
+            });
+
+            // Create a Blob with the text content
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+
+            // Generate a hidden download link
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Month_Payment_Details.txt';
+
+            // Append to body, click to trigger download, then clean up
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
         }
     </script>
     <style>
@@ -201,7 +270,7 @@
             margin-bottom: 10px;        /* Spacing between cards */
             font-family: Arial, sans-serif;
             box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            max-width: 300px;           /* Limit the width */
+            max-width: 600px;           /* Limit the width */
         }
 
         .month-label {
@@ -228,14 +297,14 @@
 
         Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" required><br><br>
         Car Model/Name:<br><input type="text" id="carName" name="carName" required><br><br>
+        Start Date:<br><input type="date" id="startDate" name="startDate" required><br><br>
         Car Price:<br> <input type="number" id="carPrice" name="carPrice"><br><br>
         Loan Term (months):<br> <input type="number" id="loanTerm" name="loanTerm"><br><br>
         Salary:<br> <input type="number" id="salary" name="salary"><br><br>
         Deposit:<br> <input type="number" id="deposit" name="deposit"><br><br>
         Annual Interest Rate:<br> <input type="number" id="annualInterest" name="annualInterest"><br><br>
-        Payment Increase Rate:<br> <input type="number" id="paymentIncrease" name="paymentIncrease"><br><br>
         <input id="submit" type="button" value="Calculate" onclick="calculateLoan()" style="margin-bottom: 10px;">
-        <button onclick="generatePDF()">Download PDF</button> <!-- PDF button -->
+        <input id="submit" type="button" value="Download statement" onclick="downloadPaymentDetails()" style="margin-bottom: 10px;">
     </form>
 
     <div id="monthContainer" class="myDiv"></div>

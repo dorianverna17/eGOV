@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, insert, text
 
 import logging
 import sys
+import time
 
 # Create and configure logger
 logging.basicConfig(format='%(asctime)s %(message)s')
@@ -18,10 +19,27 @@ logger.setLevel(logging.DEBUG)
 request_dict = {}
 request_no = 0
 
+time.sleep(5)
+
 # connect to database and create desired table
 engine = create_engine("postgresql+psycopg2://dorian:1234@data-storage:5432/database")
 conn = engine.connect()
-query_table = "CREATE TABLE payments (_no int, payments varchar(500));"
+
+query_delete = """
+DO $$
+BEGIN
+   IF EXISTS (SELECT relname FROM pg_class WHERE relname='payments') THEN
+       DELETE FROM payments;
+       DROP TABLE payments;
+   END IF;
+END $$;
+"""
+
+query=text(query_delete)
+conn.execute(query)
+conn.commit()
+
+query_table = "CREATE TABLE IF NOT EXISTS payments (_no int, payments varchar(10000));"
 query=text(query_table)
 conn.execute(query)
 conn.commit()
@@ -29,44 +47,48 @@ conn.commit()
 
 class MonthlyPayment(ComplexModel):
     month = Integer
-    payment = Integer
-    interest = Integer
+    month_payment = Float
+    interest_payment = Float
+    principal_payment = Float
 
-    def __init__(self, month, payment, interest):
+    def __init__(self, month, month_payment, interest_payment, principal_payment):
         self.month = month
-        self.payment = payment
-        self.interest = interest
+        self.month_payment = month_payment
+        self.interest_payment = interest_payment
+        self.principal_payment = principal_payment
 
     def __str__(self):
-        return f"({self.month}, {self.payment}, {self.interest})"
+        return f"({self.month}, {self.month_payment}, {self.interest_payment}, {self.principal_payment})"
 
 
 class LoanCalculatorService(ServiceBase):
-    @rpc(String, String, Float, Integer, Float, Float, Float, Float, _returns=Array(MonthlyPayment))
-    def calculateLoan(ctx, buyerName, carName, carPrice, loanTerm, salary, deposit, annualInterest, paymentIncrease):
+    @rpc(String, String, Float, Integer, Float, Float, Float, _returns=Array(MonthlyPayment))
+    def calculateLoan(ctx, buyerName, carName, carPrice, loanTerm, salary, deposit, annualInterest):
         logger.info("Entered request")
         
         monthly_rate = annualInterest / 12  # Initial monthly interest rate
         remaining_balance = carPrice - deposit  # Start with the car price minus the deposit
         
+        # Calculate the monthly payment based on the initial loan amount and term
+        monthly_payment = (remaining_balance * monthly_rate) / (1 - (1 + monthly_rate) ** -loanTerm)
+
         payments = []  # List to store (monthly payment, interest) tuples
         
         for month in range(loanTerm):
-            # Calculate the monthly payment
-            monthly_payment = (remaining_balance * monthly_rate) / (1 - (1 + monthly_rate) ** -(loanTerm - month))
+            # Calculate interest for the current month on remaining balance
+            interest_payment = remaining_balance * monthly_rate
+            principal_payment = monthly_payment - interest_payment
             
-            # Store the payment and interest for the current month
-            payments.append(MonthlyPayment(month + 1, monthly_payment, monthly_rate * 100))
-
-            logger.info(payments[-1].month)
-            
-            # Decrease the balance by the monthly payment made towards the principal
-            interest_paid = remaining_balance * monthly_rate
-            principal_paid = monthly_payment - interest_paid
-            remaining_balance -= principal_paid
-
-            # Update monthly interest rate with the paymentIncrease
-            monthly_rate += paymentIncrease / 12
+            # Store the payment details for the month
+            payments.append(MonthlyPayment(
+                month + 1,
+                monthly_payment,
+                interest_payment,
+                principal_payment
+            ))
+        
+            # Reduce the remaining balance by the principal paid
+            remaining_balance -= principal_payment
         
         global request_dict
         global request_no
