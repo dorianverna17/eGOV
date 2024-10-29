@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Car Loan Calculator</title>
+    <title>National Bank Car Loan Calculator</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script>
         // Helper functions
@@ -156,21 +156,21 @@
             const monthCards = document.querySelectorAll('.month-card');
             let fileContent = 'Month Payment Details\n\n';
 
-            const buyerName = document.querySelector('buyerName')?.textContent || '';
-            const carName = document.querySelector('carName')?.textContent || '';
-            const startDate = document.querySelector('startDate')?.textContent || '';
-            const loanTerm = document.querySelector('loanTerm')?.textContent || '';
-            const salary = document.querySelector('salary')?.textContent || '';
-            const deposit = document.querySelector('deposit')?.textContent || '';
-            const annualInterest = document.querySelector('annualInterest')?.textContent || '';
+            const buyerName = document.getElementById('buyerName').value;
+            const carName = document.getElementById('carName').value;
+            const startDate = document.getElementById('startDate').value;
+            const loanTerm = document.getElementById('loanTerm').value;
+            const salary = document.getElementById('salary').value;
+            const deposit = document.getElementById('deposit').value;
+            const annualInterest = document.getElementById('annualInterest').value;
 
             fileContent += `Buyer Name: ${buyerName}\n`
-            fileContent += `Buyer Name: ${carName}\n`
-            fileContent += `Buyer Name: ${startDate}\n`
-            fileContent += `Buyer Name: ${loanTerm}\n`
-            fileContent += `Buyer Name: ${salary}\n`
-            fileContent += `Buyer Name: ${deposit}\n`
-            fileContent += `Buyer Name: ${annualInterest}\n`
+            fileContent += `Car Name: ${carName}\n`
+            fileContent += `Start Date: ${startDate}\n`
+            fileContent += `Loan Term: ${loanTerm}\n`
+            fileContent += `Salary: ${salary}\n`
+            fileContent += `Deposit: ${deposit}\n`
+            fileContent += `Annual Interest: ${annualInterest}\n`
 
             monthCards.forEach(card => {
                 // Clone the node to avoid any potential DOM modification
@@ -293,16 +293,16 @@
 <body>
 
     <form id="loanForm" class="loan-form">
-        <h2>Car Loan Calculator</h2>
+        <h2>National Bank Car Loan Calculator</h2>
 
-        Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" required><br><br>
-        Car Model/Name:<br><input type="text" id="carName" name="carName" required><br><br>
-        Start Date:<br><input type="date" id="startDate" name="startDate" required><br><br>
-        Car Price:<br> <input type="number" id="carPrice" name="carPrice"><br><br>
-        Loan Term (months):<br> <input type="number" id="loanTerm" name="loanTerm"><br><br>
-        Salary:<br> <input type="number" id="salary" name="salary"><br><br>
-        Deposit:<br> <input type="number" id="deposit" name="deposit"><br><br>
-        Annual Interest Rate:<br> <input type="number" id="annualInterest" name="annualInterest"><br><br>
+        Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" class="input" required><br><br>
+        Car Model/Name:<br><input type="text" id="carName" name="carName" class="input" required><br><br>
+        Start Date:<br><input type="date" id="startDate" name="startDate" class="input" required><br><br>
+        Car Price:<br> <input type="number" id="carPrice" name="carPrice" class="input"><br><br>
+        Loan Term (months):<br> <input type="number" id="loanTerm" name="loanTerm" class="input"><br><br>
+        Salary:<br> <input type="number" id="salary" name="salary" class="input"><br><br>
+        Deposit:<br> <input type="number" id="deposit" name="deposit" class="input"><br><br>
+        Annual Interest Rate:<br> <input type="number" id="annualInterest" name="annualInterest" class="input"><br><br>
         <input id="submit" type="button" value="Calculate" onclick="calculateLoan()" style="margin-bottom: 10px;">
         <input id="submit" type="button" value="Download statement" onclick="downloadPaymentDetails()" style="margin-bottom: 10px;">
     </form>
