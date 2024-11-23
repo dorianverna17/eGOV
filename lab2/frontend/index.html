@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>National Bank Car Loan Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script>
+        // Helper functions
+        function showError(field, message) {
+            alert(message);
+            field.style.borderColor = "red";
+            field.focus();
+            return false;
+        }
+        function isValidDate(dateString) {
+            const regex = /^\d{4}-\d{2}-\d{2}$/; // Check format
+            if (!dateString.match(regex)) return false;
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+        function isPositiveNumber(value) {
+            return !isNaN(value) && Number(value) > 0;
+        }
+        function calculateLoan() {
+            const buyerName = document.getElementById("buyerName").value;
+            const carName = document.getElementById("carName").value;
+            const startDate = document.getElementById("startDate").value;
+            const carPrice = document.getElementById("carPrice").value;
+            const loanTerm = document.getElementById("loanTerm").value;
+            const salary = document.getElementById("salary").value;
+            const deposit = document.getElementById("deposit").value;
+            const annualInterest = document.getElementById("annualInterest").value;
+            
+            // Reset text color before validation
+            const fields = [document.getElementById("buyerName"),
+            document.getElementById("carName"),
+            document.getElementById("startDate"),
+            document.getElementById("carPrice"),
+            document.getElementById("loanTerm"),
+            document.getElementById("salary"),
+            document.getElementById("deposit"),
+            document.getElementById("annualInterest")];
+            fields.forEach(field => field.style.borderColor = "black");
+
+            // Validation logic
+            if (buyerName == "") return showError(fields[0], "Buyer name cannot be empty");
+            if (carName == "") return showError(fields[1], "Car name cannot be empty");
+            if (!isValidDate(startDate)) return showError(fields[2], "Please enter a valid start date in YYYY-MM-DD format");
+            if (!isPositiveNumber(carPrice)) return showError(fields[3], "Car price must be a positive number");
+            if (!isPositiveNumber(loanTerm)) return showError(fields[4], "Loan term must be a positive number");
+            if (!isPositiveNumber(salary)) return showError(fields[5], "Salary must be a positive number");
+            if (!isPositiveNumber(deposit)) return showError(fields[6], "Deposit must be a positive number");
+            if (!isPositiveNumber(annualInterest)) return showError(fields[7], "Annual interest must be a positive number");
+
+
+            const monthContainer = document.getElementById('monthContainer');
+
+            // Clear previous months
+            monthContainer.innerHTML = '';
+
+            var soapEnvelope = `<?xml version="1.0" encoding="utf-8"?>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                                xmlns:service="service">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <service:calculateLoan>
+                            <service:buyerName>${buyerName}</service:buyerName>
+                            <service:carName>${carName}</service:carName>
+                            <service:carPrice>${carPrice}</service:carPrice>
+                            <service:loanTerm>${loanTerm}</service:loanTerm>
+                            <service:salary>${salary}</service:salary>
+                            <service:deposit>${deposit}</service:deposit>
+                            <service:annualInterest>${annualInterest}</service:annualInterest>
+                        </service:calculateLoan>
+                    </soapenv:Body>
+                </soapenv:Envelope>`;
+
+            $.ajax({
+                url: "http://127.0.0.1:8000",
+                type: "POST",
+                dataType: "xml",
+                contentType: "text/xml; charset=UTF-8",
+                data: soapEnvelope,
+                success: function(response, textStatus, xhr) {
+                    var xmlDoc = $.parseXML(xhr.responseText);
+                    var $xml = $(xmlDoc);
+
+                    console.log(response);
+                    console.log(xmlDoc);
+                    
+                    var result = xmlDoc.getElementsByTagName("tns:calculateLoanResult");
+                    console.log(result);
+
+                    var childNodes = result[0].childNodes;
+                    console.log(childNodes);
+
+                    // Iterate over each child node that represents the monthly payment info
+                    for (var i = 0; i < result[0].childNodes.length; i++) {
+                        var monthlyPayment = childNodes[i]
+                        console.log(monthlyPayment);
+                        console.log(monthlyPayment.childNodes)
+
+                        var month = monthlyPayment.childNodes[0].childNodes[0].data
+                        console.log(month)
+
+                        var monthly_payment = Number(monthlyPayment.childNodes[1].childNodes[0].data).toFixed(3)
+                        console.log(monthly_payment)
+
+                        var principal_payment = Number(monthlyPayment.childNodes[2].childNodes[0].data).toFixed(3)
+                        console.log(principal_payment)
+
+                        var interest_payment = Number(monthlyPayment.childNodes[3].childNodes[0].data).toFixed(3)
+                        console.log(interest_payment)
+
+                        // compute the payment due date
+                        datePay = new Date(startDate)
+                        datePay = new Date(datePay.setMonth(datePay.getMonth() + i))
+                        let options = {year: 'numeric', month: 'long', day: 'numeric'};
+                        datePay = datePay.toLocaleDateString(undefined, options);
+
+                        // Render details received from the server
+                        const monthDiv = document.createElement('div');
+
+                        monthDiv.style.width = '600px';
+                        monthDiv.style.border = '1px';
+                        monthDiv.style.padding = '10px';
+                        monthDiv.style.background = "rgb(230, 173, 177)";
+                        monthDiv.style.marginBottom = '15px';
+                        monthDiv.style.marginTop = '10px';
+                        monthDiv.id = 'Month' + i;
+                        monthDiv.style.height = "max-content";
+
+                        if (monthDiv) {
+                            monthDiv.innerHTML = `
+                                <div class="month-card">
+                                    <strong class="month-label">Month:</strong> <span class="month-value">${month}</span><br>
+                                    <label class="detail-label">Monthly Payment:</label> <span class="monthly_payment-value">${monthly_payment}</span><br>
+                                    <label class="detail-label">Principal Payment:</label> <span class="principal_payment-value">${principal_payment}</span>
+                                    <label class="detail-label">Interest Payment:</label> <span class="interest_payment-value">${interest_payment}</span>
+                                    <label class="detail-label">Payment due:</label> <span class="datetime-value">${datePay}</span>
+                                </div>
+                            `;
+                        }
+
+                        monthContainer.appendChild(monthDiv);
+                    }
+                },
+                error: function(error) {
+                    console.error(error);
+                    document.getElementById("result").innerHTML = "Error calculating loan.";
+                }
+            })
+        }
+        // Function to download the payment details as a text file
+        function downloadPaymentDetails() {
+            // Retrieve all .month-card elements
+            const monthCards = document.querySelectorAll('.month-card');
+            let fileContent = 'Month Payment Details\n\n';
+
+            const buyerName = document.getElementById('buyerName').value;
+            const carName = document.getElementById('carName').value;
+            const startDate = document.getElementById('startDate').value;
+            const loanTerm = document.getElementById('loanTerm').value;
+            const salary = document.getElementById('salary').value;
+            const deposit = document.getElementById('deposit').value;
+            const annualInterest = document.getElementById('annualInterest').value;
+
+            fileContent += `Buyer Name: ${buyerName}\n`
+            fileContent += `Car Name: ${carName}\n`
+            fileContent += `Start Date: ${startDate}\n`
+            fileContent += `Loan Term: ${loanTerm}\n`
+            fileContent += `Salary: ${salary}\n`
+            fileContent += `Deposit: ${deposit}\n`
+            fileContent += `Annual Interest: ${annualInterest}\n`
+
+            monthCards.forEach(card => {
+                // Clone the node to avoid any potential DOM modification
+                const month = card.querySelector('.month-value')?.textContent || '';
+                const monthly_payment = card.querySelector('.monthly_payment-value')?.textContent || '';
+                const principal_payment = card.querySelector('.principal_payment-value')?.textContent || '';
+                const interest_payment = card.querySelector('.interest_payment-value')?.textContent || '';
+                const payment_date = card.querySelector('.datetime-value')?.textContent || '';
+
+                // Format file content
+                fileContent += `Month: ${month}\nMonthly payment: ${monthly_payment}\nInterest Payment: ${interest_payment}\nPrincipal Payment: ${principal_payment}\nPayment Due: ${payment_date}\n`;
+            });
+
+            // Create a Blob with the text content
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+
+            // Generate a hidden download link
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Month_Payment_Details.txt';
+
+            // Append to body, click to trigger download, then clean up
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 90vh; /* Full height */
+        }
+
+        .myDiv {
+            width: 60%; /* Set the width of the div container */
+            padding: 20px;
+            border: 1px solid #ccc; /* Optional border for visibility */
+            background-color: #f9f9f9; /* Light background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        .loan-form {
+            width: 40%; /* Set the width of the form */
+            margin-left: 20px; /* Space between div and form */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50; /* Dark color for title */
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block; /* Ensures labels stack nicely */
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 60%; /* Full width input fields */
+            padding: 10px; /* Padding for input fields */
+            border: 1px solid #ccc; /* Border for input fields */
+            border-radius: 4px; /* Rounded corners */
+            margin-right: 10px;
+        }
+
+        input[type="button"],
+        button {
+            padding: 10px 15px;
+            background-color: #3498db; /* Button background color */
+            color: white; /* Button text color */
+            border: none; /* Remove border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        input[type="button"]:hover,
+        button:hover {
+            background-color: #2980b9; /* Darker shade on hover */
+        }
+
+        .month-card {
+            background-color: #f5f5f5; /* Light grey background */
+            border: 1px solid #ddd;     /* Light border */
+            border-radius: 8px;         /* Rounded corners */
+            padding: 10px;              /* Spacing inside */
+            margin-bottom: 10px;        /* Spacing between cards */
+            font-family: Arial, sans-serif;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            max-width: 600px;           /* Limit the width */
+        }
+
+        .month-label {
+            font-size: 1.2em;           /* Larger font for the month */
+            color: #333;                /* Darker text color */
+        }
+
+        .detail-label {
+            font-weight: bold;          /* Bold for labels */
+            color: #555;                /* Slightly lighter color for labels */
+        }
+
+        .detail-value {
+            color: #666;                /* Darker gray for values */
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <form id="loanForm" class="loan-form">
+        <h2>National Bank Car Loan Calculator</h2>
+
+        Buyer's Name:<br><input type="text" id="buyerName" name="buyerName" class="input" required><br><br>
+        Car Model/Name:<br><input type="text" id="carName" name="carName" class="input" required><br><br>
+        Start Date:<br><input type="date" id="startDate" name="startDate" class="input" required><br><br>
+        Car Price:<br> <input type="number" id="carPrice" name="carPrice" class="input"><br><br>
+        Loan Term (months):<br> <input type="number" id="loanTerm" name="loanTerm" class="input"><br><br>
+        Salary:<br> <input type="number" id="salary" name="salary" class="input"><br><br>
+        Deposit:<br> <input type="number" id="deposit" name="deposit" class="input"><br><br>
+        Annual Interest Rate:<br> <input type="number" id="annualInterest" name="annualInterest" class="input"><br><br>
+        <input id="submit" type="button" value="Calculate" onclick="calculateLoan()" style="margin-bottom: 10px;">
+        <input id="submit" type="button" value="Download statement" onclick="downloadPaymentDetails()" style="margin-bottom: 10px;">
+    </form>
+
+    <div id="monthContainer" class="myDiv"></div>
+</body>
+
+</html>

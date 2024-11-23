@@ -1,0 +1,39 @@
+services:
+  frontend:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - server
+    networks:
+      - server_network
+
+  server:
+    build: ./server
+    ports:
+      - "8000:8000"
+    networks:
+      - server_network
+      - storage_network
+
+  data-storage:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: dorian
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: database
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - storage_network
+
+networks:
+  server_network:
+    name: server_network
+  storage_network:
+    name: storage_network
+  
