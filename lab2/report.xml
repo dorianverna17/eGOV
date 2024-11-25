@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Flower_Landscape_3" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c368610e-5bee-4e75-8f1e-ecda64380534">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="47"/>
+	<property name="ireport.y" value="451"/>
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[cGF5bWVudHMgQVMgLDEyMCwxNDYsYzc5YzBkMTEtMzA2Zi00MTNiLWI5NDYtNTZhYjU5NDhiMDRm
+Ow==]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyDatabaseEgov"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="PieChartDataset" uuid="21b70311-b650-4678-a39c-887917366bf0"/>
+	<subDataset name="DatasetEGOV" uuid="285b67eb-21b0-45be-82b0-2b4f60449150">
+		<property name="com.jaspersoft.studio.data.sql.tables" value="cGF5bWVudHMgQVMgLDEwNCwyMCw3Mjg0Yjk4MC1hMmQ0LTQ3NjItYTQwYi00ODg5MTAxZmJhMjc7"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyDatabaseEgov"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT carprice,
+	loanterm,
+	averagemonthlypayment
+FROM payments]]>
+		</queryString>
+		<field name="carprice" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="carprice"/>
+			<property name="com.jaspersoft.studio.field.label" value="carprice"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<field name="loanterm" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="loanterm"/>
+			<property name="com.jaspersoft.studio.field.label" value="loanterm"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<field name="averagemonthlypayment" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="averagemonthlypayment"/>
+			<property name="com.jaspersoft.studio.field.label" value="averagemonthlypayment"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+	</subDataset>
+	<subDataset name="DatasetEGOV2" uuid="5972c8a1-cb85-4839-8d58-e7926dd9d69a">
+		<property name="com.jaspersoft.studio.data.sql.tables" value="cGF5bWVudHMgQVMgLDIwOSwxNSw2ZWM0YThhOS1jOWEzLTQxNTctYTM4ZS04ZDZlNDU3OGRmNDc7"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyDatabaseEgov"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT carprice,
+	loanterm,
+	totalpaid,
+	averagemonthlypayment
+FROM payments]]>
+		</queryString>
+		<field name="carprice" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="carprice"/>
+			<property name="com.jaspersoft.studio.field.label" value="carprice"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<field name="loanterm" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="loanterm"/>
+			<property name="com.jaspersoft.studio.field.label" value="loanterm"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<field name="totalpaid" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="totalpaid"/>
+			<property name="com.jaspersoft.studio.field.label" value="totalpaid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<field name="averagemonthlypayment" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="averagemonthlypayment"/>
+			<property name="com.jaspersoft.studio.field.label" value="averagemonthlypayment"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+		</field>
+		<group name="carprice">
+			<groupExpression><![CDATA[$F{carprice}]]></groupExpression>
+		</group>
+		<group name="loanterm">
+			<groupExpression><![CDATA[$F{loanterm}]]></groupExpression>
+		</group>
+		<group name="totalpaid">
+			<groupExpression><![CDATA[$F{totalpaid}]]></groupExpression>
+		</group>
+		<group name="averagemonthlypayment">
+			<groupExpression><![CDATA[$F{averagemonthlypayment}]]></groupExpression>
+		</group>
+	</subDataset>
+	<queryString language="SQL">
+		<![CDATA[SELECT carprice,
+	loanterm,
+	totalpaid,
+	totalinterestpaid,
+	averagemonthlypayment,
+	averageinterestpayment
+FROM payments]]>
+	</queryString>
+	<field name="carprice" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="Car Price"/>
+		<property name="com.jaspersoft.studio.field.label" value="Car Price"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<field name="loanterm" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="Loan Term"/>
+		<property name="com.jaspersoft.studio.field.label" value="Loan Term"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<field name="totalpaid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="Total Paid"/>
+		<property name="com.jaspersoft.studio.field.label" value="Total Paid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<field name="totalinterestpaid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="Total Interest"/>
+		<property name="com.jaspersoft.studio.field.label" value="Total Interest"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<field name="averagemonthlypayment" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="Average Monthly"/>
+		<property name="com.jaspersoft.studio.field.label" value="Average Monthly"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<field name="averageinterestpayment" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="Average Interest"/>
+		<property name="com.jaspersoft.studio.field.label" value="Average Interest"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payments"/>
+	</field>
+	<variable name="avgCarPrice" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{carprice}]]></variableExpression>
+	</variable>
+	<variable name="avgLoanTerm" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{loanterm}]]></variableExpression>
+	</variable>
+	<variable name="avgTotalPaid" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{totalpaid}]]></variableExpression>
+	</variable>
+	<variable name="avgTotalInterestPaid" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{totalinterestpaid}]]></variableExpression>
+	</variable>
+	<variable name="avgAverageMonthlyPayment" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{averagemonthlypayment}]]></variableExpression>
+	</variable>
+	<variable name="avgAverageInterestPayment" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{averageinterestpayment}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="555" splitType="Stretch">
+			<image>
+				<reportElement x="-20" y="65" width="229" height="250" uuid="20bb2440-c413-4a05-a706-a10d8c847aba">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["flower1.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="-20" y="-20" width="229" height="250" uuid="5a4947cf-88fa-4c35-83d8-b8d2e9d03edc">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} > 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["flower1.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="318" y="315" width="239" height="181" backcolor="#FFFFCC" uuid="0f98be0a-3da9-4645-8383-7bd38e4a88b4">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+					<pen lineWidth="1.0" lineColor="#CC9900"/>
+					<topPen lineWidth="1.0" lineColor="#CC9900"/>
+					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
+					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
+				</box>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Each chart is populated on each page.
+The 3 pie charts are currently using an empty datasource and the values are
+generated using a random generator.
+
+This rectangle element is not printed (see the print when expression of this
+element)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="201" y="431" width="117" height="1" uuid="ebeedd7d-68bc-411e-9f52-5c762b989974">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="275" y="-10" width="240" height="181" backcolor="#FFFFCC" uuid="f887be05-9083-4f7a-b144-bb6bd4dc2f7b">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
+					<pen lineWidth="1.0" lineColor="#CC9900"/>
+					<topPen lineWidth="1.0" lineColor="#CC9900"/>
+					<leftPen lineWidth="1.0" lineColor="#CC9900"/>
+					<bottomPen lineWidth="1.0" lineColor="#CC9900"/>
+					<rightPen lineWidth="1.0" lineColor="#CC9900"/>
+				</box>
+				<textElement markup="none">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Flowers
+
+There are two flowers, the first one is printed only starting from the second page, the other one only in the first page.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="72" y="37" width="204" height="1" uuid="50033920-6ece-4e33-9058-4e5a2a9855ad">
+					<printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Dotted" lineColor="#996600"/>
+				</graphicElement>
+			</line>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="300" width="201" height="220" uuid="d3d4cc33-d6d5-4132-b64b-c8c779b8404a"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Car Price"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Car Price"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgCarPrice}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Total Paid"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Total Paid"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgTotalPaid}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="560" y="300" width="242" height="220" uuid="485ef2f1-2ef6-4598-b9a5-3ec40174ec1e"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Loan Term"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Loan Term"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgLoanTerm}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Interest Payment"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Interest Payment"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgAverageInterestPayment}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="250" y="300" width="262" height="220" uuid="8586af4c-2dd0-4049-b772-d22c630ae1a3"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Total Interest Paid"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Total Interest Paid"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgTotalInterestPaid}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Average Monthly Payment"]]></seriesExpression>
+						<categoryExpression><![CDATA["Average Monthly Payment"]]></categoryExpression>
+						<valueExpression><![CDATA[$V{avgAverageMonthlyPayment}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement style="SubTitle" x="336" y="65" width="449" height="29" uuid="0dae0af3-dd1d-4b42-b346-386af21f0689"/>
+				<textElement textAlignment="Right">
+					<font size="22" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Data Related to Car Loan System]]></text>
+			</staticText>
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="83f5e806-cc04-4161-87a9-07633f604bc1"/>
+				<staticText>
+					<reportElement style="Title" x="231" y="0" width="578" height="65" uuid="f5cd9ee0-5caa-4e48-8946-c7e84d82a845"/>
+					<textElement textAlignment="Right">
+						<font size="54" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Car Loan System Report]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="2a3d298d-90eb-4db1-919a-c9b2ed28c222"/>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="0" y="0" width="95" height="14" forecolor="#000000" uuid="c8700d89-f135-4ff7-86c7-22b6455a1f92">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3ef59f84-48d5-4ce3-873d-2ce242017284"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Car Price]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="95" y="0" width="95" height="14" forecolor="#000000" uuid="d2c4d664-039e-47cf-8c1b-24e67bccb679">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc3c7f03-8c1f-444a-a477-cfeb0d727e24"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Loan Term]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="190" y="0" width="95" height="14" forecolor="#000000" uuid="2ec8b74a-8712-47e3-b142-7444e1e574c4">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a50e5028-f68d-44ae-89a3-43a1a14a44ed"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Paid]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="285" y="0" width="95" height="14" forecolor="#000000" uuid="16a23c9b-6d0f-463a-87f5-8c787f71e140">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8bf0ff54-ddd7-4063-9099-a3029a33d80e"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Interest]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="380" y="0" width="95" height="14" forecolor="#000000" uuid="159644b7-f9b3-4b0f-a927-5c55decf8ed7">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="afd4735e-45a4-4695-b799-de051fc657e8"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AVG Monthly Payment]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="475" y="0" width="95" height="14" forecolor="#000000" uuid="3580e44a-8eb8-4575-840d-baf95626824a">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cb7f9936-a0c2-4a99-af9d-2b157ffbf4dc"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AVG Interest Payment]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="227" y="14" width="575" height="1" uuid="ad4e998c-7071-4467-b7fa-4441cc53d3f6"/>
+			</line>
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="822bafe9-34ee-4b4f-aa76-3eae029c4911"/>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="0" y="0" width="95" height="14" uuid="9da7762a-17bd-4925-9a13-a9bc0a179c00">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3ef59f84-48d5-4ce3-873d-2ce242017284"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{carprice}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="95" y="0" width="95" height="14" uuid="c265fb73-276a-429d-81a1-38f72694e303">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bc3c7f03-8c1f-444a-a477-cfeb0d727e24"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{loanterm}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="190" y="0" width="95" height="14" uuid="3554f7b7-3fe3-43a7-80bb-0dd53f56a4eb">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a50e5028-f68d-44ae-89a3-43a1a14a44ed"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalpaid}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="285" y="0" width="95" height="14" uuid="9a6ffc6a-e57f-4f9b-aeb8-3b79c0c09159">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8bf0ff54-ddd7-4063-9099-a3029a33d80e"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalinterestpaid}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="380" y="0" width="95" height="14" uuid="f47638d7-d41b-46c5-a2de-4015a0a5c7b2">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="afd4735e-45a4-4695-b799-de051fc657e8"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{averagemonthlypayment}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="475" y="0" width="95" height="14" uuid="568ae517-e87b-4fe2-b736-4a9f8129e56a">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cb7f9936-a0c2-4a99-af9d-2b157ffbf4dc"/>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{averageinterestpayment}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="c23ffbf7-1928-41f8-ade3-5930d9a4871d"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="6f4fe8ef-88ca-4d5d-b46a-054826bb7893"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="970781d6-87a0-4d3d-a07b-5ae173a1317a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="42664b34-c87b-42f8-911b-bd9c2ab9111e"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="06b3d6e8-b4a5-4251-b1fb-f640689933e8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="400" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</summary>
+</jasperReport>

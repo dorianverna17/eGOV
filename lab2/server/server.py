@@ -51,7 +51,12 @@ CREATE TABLE IF NOT EXISTS payments (
     salary DECIMAL(10, 2) NOT NULL, 
     annualInterest DECIMAL(5, 2) NOT NULL, 
     payments TEXT NOT NULL, 
-    basic_statistics TEXT NOT NULL
+    totalPaid DECIMAL(10, 2) NOT NULL,
+    totalInterestPaid DECIMAL(10, 2) NOT NULL,
+    totalPrincipalPaid DECIMAL(10, 2) NOT NULL,
+    averageMonthlyPayment DECIMAL(10, 2) NOT NULL,
+    averageInterestPayment DECIMAL(10, 2) NOT NULL,
+    averagePrincipalPayment DECIMAL(10, 2) NOT NULL
 );
 """
 query = text(query_table)
@@ -63,8 +68,11 @@ conn.commit()
 # database in order to introduce a row in the table
 def constructQuery(id, buyerName, carName, carPrice, loanTerm, deposit, salary, annualInterest, payments, basic_statistics):
     query_text = (
-        f"INSERT INTO payments (id, buyerName, carName, carPrice, loanTerm, deposit, salary, annualInterest, payments, basic_statistics) "
-        f"VALUES ({id}, '{buyerName}', '{carName}', {carPrice}, {loanTerm}, {deposit}, {salary}, {annualInterest}, '{payments}', '{basic_statistics}');"
+        f"INSERT INTO payments (id, buyerName, carName, carPrice, loanTerm, deposit, salary, annualInterest, payments,\
+            totalPaid, totalInterestPaid, totalPrincipalPaid, averageMonthlyPayment, averageInterestPayment, averagePrincipalPayment) "
+        f"VALUES ({id}, '{buyerName}', '{carName}', {carPrice}, {loanTerm}, {deposit}, {salary}, {annualInterest}, '{payments}',\
+            '{basic_statistics.totalPaid}', '{basic_statistics.totalInterestPaid}', '{basic_statistics.totalPrincipalPaid}',\
+            '{basic_statistics.averageMonthlyPayment}', '{basic_statistics.averageInterestPayment}', '{basic_statistics.averagePrincipalPayment}');"
     )
     return query_text
 
@@ -113,7 +121,7 @@ def addTestData():
             salary=salaries[i],
             annualInterest=annualInterests[i],
             payments=str(payments),
-            basic_statistics=str(basic_statistics)
+            basic_statistics=basic_statistics
         )
 
         logger.info(f"Executing query: {query}")
