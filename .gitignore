@@ -1,2 +1,7 @@
 lab1/data/*
 lab2/data/*
+lab3/out/*
+lab3/out_crawler/*
+
+# MacOS specific
+.DS_Store
