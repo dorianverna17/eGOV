@@ -39,3 +39,22 @@ ministries = [
 ]
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+
+sheet_names = [
+    "Ministerul Transporturilor",
+    "Ministerul Finantelor",
+    "MAI",
+    "MAE",
+    "Ministerul Justitiei",
+    "Ministerul Apararii",
+    "Ministerul Economiei",
+    "Ministerul Energiei",
+    "Ministerul Agriculturii",
+    "Ministerul Mediului",
+    "Ministerul Dezvoltarii",
+    "Ministerul Investitiilor",
+    "Ministerul Muncii",
+    "Ministerul Sanatatii",
+    "Ministerul Educatiei",
+    "Ministerul Culturii",
+]
